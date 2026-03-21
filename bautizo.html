@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>👼 Catálogo Bautizo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%); 
+      padding: 20px; 
+      min-height: 100vh; 
+    }
+    .header { text-align: center; color: white; margin-bottom: 40px; padding: 20px; }
+    .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+    .header p { font-size: 1.1em; opacity: 0.9; }
+    .stats { 
+      background: rgba(255,255,255,0.2); 
+      padding: 15px; 
+      border-radius: 10px; 
+      text-align: center; 
+      color: white; 
+      margin-bottom: 30px; 
+      max-width: 1200px; 
+      margin-left: auto; 
+      margin-right: auto; 
+    }
+    .filters { 
+      background: white; 
+      padding: 20px; 
+      border-radius: 15px; 
+      margin-bottom: 30px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+      max-width: 1200px; 
+      margin-left: auto; 
+      margin-right: auto; 
+    }
+    .search-box { 
+      width: 100%; 
+      padding: 15px; 
+      font-size: 1.1em; 
+      border: 2px solid #667eea; 
+      border-radius: 10px; 
+      margin-bottom: 15px; 
+    }
+    .price-filter { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .price-filter button { 
+      padding: 10px 20px; 
+      background: #667eea; 
+      color: white; 
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-weight: bold; 
+    }
+    .price-filter button:hover { background: #5568d3; }
+    .price-filter button.active { background: #764ba2; }
+    .products-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+      gap: 25px; 
+      max-width: 1200px; 
+      margin: 0 auto 40px; 
+    }
+    .product-card { 
+      background: white; 
+      border-radius: 15px; 
+      overflow: hidden; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+      transition: transform 0.3s;
+    }
+    .product-card:hover { transform: translateY(-5px); }
+    .product-image { 
+      width: 100%; 
+      height: 300px; 
+      object-fit: cover; 
+      background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .product-image img { width: 100%; height: 100%; object-fit: cover; }
+    .product-info { padding: 20px; }
+    .product-name { font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 10px; }
+    .product-price { font-size: 1.6em; color: #667eea; font-weight: bold; margin-bottom: 10px; }
+    .product-tallas { color: #666; font-size: 0.9em; margin-bottom: 15px; }
+    .btn-whatsapp { 
+      display: block; 
+      width: 100%; 
+      padding: 12px; 
+      background: #25D366; 
+      color: white; 
+      text-align: center; 
+      text-decoration: none; 
+      border-radius: 8px; 
+      font-weight: bold; 
+    }
+    .btn-whatsapp:hover { background: #1fb855; }
+    .no-results { 
+      text-align: center; 
+      padding: 60px; 
+      background: white; 
+      border-radius: 15px; 
+      color: #666; 
+    }
+    @media (max-width: 768px) { 
+      .header h1 { font-size: 1.8em; } 
+      .products-grid { grid-template-columns: 1fr; } 
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>👼 Catálogo Bautizo</h1>
+    <p>Vestidos Elegantes para Primera Comunión y Bautizo</p>
+  </div>
+  
+  <div class="stats" id="stats"></div>
+  
+  <div class="filters">
+    <input type="text" id="searchBox" class="search-box" placeholder="🔍 Buscar vestido...">
+    <div class="price-filter">
+      <button onclick="filterPrice('all')" class="active">Todos</button>
+      <button onclick="filterPrice('0-150')">Hasta S/. 150</button>
+      <button onclick="filterPrice('150-200')">S/. 150 - 200</button>
+      <button onclick="filterPrice('200-300')">S/. 200 - 300</button>
+      <button onclick="filterPrice('300+')">Más de S/. 300</button>
+    </div>
+  </div>
+  
+  <div class="products-grid" id="productsGrid"></div>
+  
+  <script>
+    const PRODUCTOS = [{"ID":"80014","Nombre":"Vestido Liz","Categoría Principal":"Bautizo","Todas las Tags":"Vestido, Bautizo, Perlas","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Haz que su luz brille en su Bautizo o Primera Comunión con el exclusivo Vestido Liz Blanco. 🕊️ Diseñado para capturar la pureza y alegría de este momento sagrado, este modelo destaca por su falda de tul de ensueño, un lazo majestuoso en la espalda y una corona de flores que completa su look de ángel. Un diseño impecable que hará que tu pequeña se sienta como una verdadera princesa mientras creas recuerdos que durarán toda la vida. ✨🙏","Descripción Larga":"","Foto Principal":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7430624705037496320-gemini-generated-image-m32ergm32ergm32e.png","Todas las Fotos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7430624705037496320-gemini-generated-image-m32ergm32ergm32e.png","Total Fotos":"1","Videos":"","Total Videos":"0","Tallas Disponibles":"2, 4, 6, 8, 10, 12","Estado":"Activo","Fecha Creación":"2026-02-20T14:49:49.037014Z","Fecha Actualización":"2026-02-20T14:49:49.037014Z"},{"ID":"63425","Nombre":"Vestido MariaFe (Tallas 2-8)","Categoría Principal":"Bautizo","Todas las Tags":"blanco, vestido, Bautizo","Precio Mínimo":"180","Precio Máximo":"180","Precio Promedio":"180","Descripción Corta":"Tul escarchado, flores 3D, lazo grande","Descripción Larga":"Tul escarchado, flores 3D, lazo grande. Tallas: 2,4,6,8","Foto Principal":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7424909359064313856-gemini-generated-image-ujrsxjujrsxjujrs.png","Todas las Fotos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7424909359064313856-gemini-generated-image-ujrsxjujrsxjujrs.png","Total Fotos":"1","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:11.381482Z","Fecha Actualización":"2026-01-31T00:34:11.381482Z"},{"ID":"63418","Nombre":"Vestido Sandra Verde Cemento (Tallas 12-16)","Categoría Principal":"Bautizo","Todas las Tags":"vestido, Bautizo","Precio Mínimo":"180","Precio Máximo":"180","Precio Promedio":"180","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Verde Cemento","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Verde Cemento. Tallas: 12,14,16","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"12,14,16","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:10.877846Z","Fecha Actualización":"2026-01-31T00:34:10.877846Z"},{"ID":"63411","Nombre":"Vestido Sandra Verde Cemento (Tallas 2-10)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Verde Cemento","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Verde Cemento. Tallas: 2,4,6,8,10","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8,10","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:10.575005Z","Fecha Actualización":"2026-01-31T00:34:10.575005Z"},{"ID":"63401","Nombre":"Vestido Sandra Palo Rosa (Tallas 12-16)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"180","Precio Máximo":"180","Precio Promedio":"180","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Palo Rosa","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Palo Rosa. Tallas: 12,14,16","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"12,14,16","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:10.266427Z","Fecha Actualización":"2026-01-31T00:34:10.266427Z"},{"ID":"63398","Nombre":"Vestido MariaFe (Tallas 14-16)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"230","Precio Máximo":"230","Precio Promedio":"230","Descripción Corta":"Tul escarchado, flores 3D, lazo grande","Descripción Larga":"Tul escarchado, flores 3D, lazo grande. Tallas: 14,16","Foto Principal":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7424909359064313856-gemini-generated-image-ujrsxjujrsxjujrs.png","Todas las Fotos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7424909359064313856-gemini-generated-image-ujrsxjujrsxjujrs.png","Total Fotos":"1","Videos":"","Total Videos":"0","Tallas Disponibles":"14,16","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:09.971475Z","Fecha Actualización":"2026-01-31T00:34:09.971475Z"},{"ID":"63381","Nombre":"Vestido Sandra Blanco (Tallas 12-16)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"180","Precio Máximo":"180","Precio Promedio":"180","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Blanco","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Blanco. Tallas: 12,14,16","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"12,14,16","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:08.889626Z","Fecha Actualización":"2026-01-31T00:34:08.889626Z"},{"ID":"63378","Nombre":"Vestido Sandra Lila (Tallas 12-16)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"180","Precio Máximo":"180","Precio Promedio":"180","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Lila","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Lila. Tallas: 12,14,16","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"12,14,16","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:08.867646Z","Fecha Actualización":"2026-01-31T00:34:08.867646Z"},{"ID":"63373","Nombre":"Vestido Sandra Verde Agua (Tallas 2-10)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Verde Agua","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Verde Agua. Tallas: 2,4,6,8,10","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8,10","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:08.677028Z","Fecha Actualización":"2026-01-31T00:34:08.677028Z"},{"ID":"63366","Nombre":"Vestido Sandra Palo Rosa (Tallas 2-10)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Palo Rosa","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Palo Rosa. Tallas: 2,4,6,8,10","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8,10","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:08.066858Z","Fecha Actualización":"2026-01-31T00:34:08.066858Z"},{"ID":"63364","Nombre":"Vestido Sandra Verde Agua (Tallas 12-16)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"180","Precio Máximo":"180","Precio Promedio":"180","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Verde Agua","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Verde Agua. Tallas: 12,14,16","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"12,14,16","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:07.884568Z","Fecha Actualización":"2026-01-31T00:34:07.884568Z"},{"ID":"63361","Nombre":"Vestido Sandra Blanco (Tallas 2-10)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Blanco","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Blanco. Tallas: 2,4,6,8,10","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8,10","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:07.494628Z","Fecha Actualización":"2026-01-31T00:34:07.494628Z"},{"ID":"63359","Nombre":"Vestido Sandra Nude (Tallas 2-10)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Nude","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Nude. Tallas: 2,4,6,8,10","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8,10","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:07.388451Z","Fecha Actualización":"2026-01-31T00:34:07.388451Z"},{"ID":"63358","Nombre":"Vestido Sandra Lila (Tallas 2-10)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Lila","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Lila. Tallas: 2,4,6,8,10","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8,10","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:07.283747Z","Fecha Actualización":"2026-01-31T00:34:07.283747Z"},{"ID":"63354","Nombre":"Vestido Sandra Nude (Tallas 12-16)","Categoría Principal":"Bautizo","Todas las Tags":"vestido, Bautizo","Precio Mínimo":"180","Precio Máximo":"180","Precio Promedio":"180","Descripción Corta":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Nude","Descripción Larga":"Tul bordado en pecho, falda lisa elegante, moño grande adaptable - Color Nude. Tallas: 12,14,16","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_blanco_lila_nude.png | https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_vestido_sandra_palo_rosa_verde_agua_verde_cemento.png","Total Fotos":"2","Videos":"","Total Videos":"0","Tallas Disponibles":"12,14,16","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:07.286692Z","Fecha Actualización":"2026-01-31T00:34:07.286692Z"},{"ID":"63310","Nombre":"Vestido Emilia","Categoría Principal":"Bautizo","Todas las Tags":"Blanco, Primera Comunión, vestido, Bautizo","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Falda tul con pétalos 3D, perlas, gran lazo","Descripción Larga":"Falda tul con pétalos 3D, perlas, gran lazo. Tallas: 2,4,6,8,10,12","Foto Principal":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7424932329765761024-gemini-generated-image-8naf9z8naf9z8naf.png","Todas las Fotos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7424932329765761024-gemini-generated-image-8naf9z8naf9z8naf.png","Total Fotos":"1","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8,10,12","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:04.667312Z","Fecha Actualización":"2026-01-31T00:34:04.667312Z"},{"ID":"63302","Nombre":"Vestido Bombachito","Categoría Principal":"Bautizo","Todas las Tags":"vestido, blanco, Bautizo","Precio Mínimo":"150","Precio Máximo":"150","Precio Promedio":"150","Descripción Corta":"Satén, mangas bombachas, falda globo, lazo largo","Descripción Larga":"Satén, mangas bombachas, falda globo, lazo largo. Tallas: 2,4,6,8,10,12","Foto Principal":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_emilia_bombachito.png","Todas las Fotos":"https://yavendio-legacy-yv-staging.s3.us-east-2.amazonaws.com/trigger_bot/waruna/waruna_emilia_bombachito.png","Total Fotos":"1","Videos":"","Total Videos":"0","Tallas Disponibles":"2,4,6,8,10,12","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:03.984059Z","Fecha Actualización":"2026-01-31T00:34:03.984059Z"},{"ID":"63269","Nombre":"Vestido MariaFe (Tallas 10-12)","Categoría Principal":"Bautizo","Todas las Tags":"Bautizo","Precio Mínimo":"200","Precio Máximo":"200","Precio Promedio":"200","Descripción Corta":"Tul escarchado, flores 3D, lazo grande","Descripción Larga":"Tul escarchado, flores 3D, lazo grande. Tallas: 10,12","Foto Principal":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7424909359064313856-gemini-generated-image-ujrsxjujrsxjujrs.png","Todas las Fotos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7424909359064313856-gemini-generated-image-ujrsxjujrsxjujrs.png","Total Fotos":"1","Videos":"","Total Videos":"0","Tallas Disponibles":"10,12","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:00.871293Z","Fecha Actualización":"2026-01-31T00:34:00.871293Z"},{"ID":"63254","Nombre":"Vestido Bruselitas Blanco (Tallas 2-8)","Categoría Principal":"Bautizo","Todas las Tags":"Elegante, Bautizo, Vestido, Blanco","Precio Mínimo":"180","Precio Máximo":"180","Precio Promedio":"180","Descripción Corta":"Vestido elegante con detalles dorados - Color Blanco","Descripción Larga":"Vestido elegante con detalles dorados - Color Blanco. Tallas: 2,4,6,8","Foto Principal":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7432508427806470144-gemini-generated-image-bb2w3ybb2w3ybb2w.png","Todas las Fotos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7432508427806470144-gemini-generated-image-bb2w3ybb2w3ybb2w.png","Total Fotos":"1","Videos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7433183797971021824-vestido-bruselas-blanco.mp4","Total Videos":"1","Tallas Disponibles":"2,4,6,8","Estado":"Activo","Fecha Creación":"2026-01-31T00:34:00.577733Z","Fecha Actualización":"2026-01-31T00:34:00.577733Z"},{"ID":"63225","Nombre":"Vestido Bruselitas Blanco (Tallas 10-16)","Categoría Principal":"Bautizo","Todas las Tags":"Elegante, Bautizo, Bruselas, Blanco, Primera Comunión, Vestido","Precio Mínimo":"200","Precio Máximo":"200","Precio Promedio":"200","Descripción Corta":"Vestido elegante con detalles dorados - Color Blanco","Descripción Larga":"Vestido elegante con detalles dorados - Color Blanco. Tallas: 10,12,14,16","Foto Principal":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7432882090959466496-collage-bruselitas-blanco.png","Todas las Fotos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7432882090959466496-collage-bruselitas-blanco.png","Total Fotos":"1","Videos":"https://yavendio-prd-merchants.s3.us-east-2.amazonaws.com/company/344/products/7432882337437741056-vestido-bruselas-blanco.mp4","Total Videos":"1","Tallas Disponibles":"10,12,14,16","Estado":"Activo","Fecha Creación":"2026-01-31T00:33:59.973121Z","Fecha Actualización":"2026-01-31T00:33:59.973121Z"}];
+    let filteredProducts = [...PRODUCTOS];
+    let currentPriceFilter = 'all';
+    
+    function updateStats() {
+      document.getElementById('stats').innerHTML = 
+        '📦 ' + filteredProducts.length + ' productos disponibles';
+    }
+    
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      if (filteredProducts.length === 0) {
+        grid.innerHTML = '<div class="no-results"><h2>😕 No hay productos</h2><p>Intenta con otros filtros</p></div>';
+        return;
+      }
+      
+      grid.innerHTML = filteredProducts.map(p => {
+        const foto = p['Foto Principal'] || '';
+        const nombre = p['Nombre'] || '';
+        const precio = p['Precio Mínimo'] || '0';
+        const tallas = p['Tallas Disponibles'] || 'Consultar';
+        const mensaje = encodeURIComponent('Hola! Me interesa el ' + nombre);
+        
+        return `
+          <div class="product-card">
+            <div class="product-image">
+              ${foto ? '<img src="' + foto + '" alt="' + nombre + '" onerror="this.style.display=\'none\'">' : '📷'}
+            </div>
+            <div class="product-info">
+              <div class="product-name">${nombre}</div>
+              <div class="product-price">S/. ${precio}</div>
+              <div class="product-tallas">Tallas: ${tallas}</div>
+              <a href="https://wa.me/51925472563?text=${mensaje}" class="btn-whatsapp" target="_blank">💬 Consultar por WhatsApp</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function filterPrice(range) {
+      currentPriceFilter = range;
+      document.querySelectorAll('.price-filter button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      if (range === 'all') {
+        filteredProducts = [...PRODUCTOS];
+      } else {
+        filteredProducts = PRODUCTOS.filter(p => {
+          const price = parseFloat(p['Precio Mínimo'] || 0);
+          if (range === '0-150') return price <= 150;
+          if (range === '150-200') return price > 150 && price <= 200;
+          if (range === '200-300') return price > 200 && price <= 300;
+          if (range === '300+') return price > 300;
+          return true;
+        });
+      }
+      applySearch();
+    }
+    
+    function applySearch() {
+      const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+      let displayProducts = filteredProducts;
+      
+      if (searchTerm) {
+        displayProducts = filteredProducts.filter(p => 
+          (p['Nombre'] || '').toLowerCase().includes(searchTerm) ||
+          (p['Todas las Tags'] || '').toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      // Actualizar grid con productos filtrados
+      const grid = document.getElementById('productsGrid');
+      if (displayProducts.length === 0) {
+        grid.innerHTML = '<div class="no-results"><h2>😕 No hay productos</h2><p>Intenta con otros filtros</p></div>';
+      } else {
+        grid.innerHTML = displayProducts.map(p => {
+          const foto = p['Foto Principal'] || '';
+          const nombre = p['Nombre'] || '';
+          const precio = p['Precio Mínimo'] || '0';
+          const tallas = p['Tallas Disponibles'] || 'Consultar';
+          const mensaje = encodeURIComponent('Hola! Me interesa el ' + nombre);
+          
+          return `
+            <div class="product-card">
+              <div class="product-image">
+                ${foto ? '<img src="' + foto + '" alt="' + nombre + '" onerror="this.style.display=\'none\'">' : '📷'}
+              </div>
+              <div class="product-info">
+                <div class="product-name">${nombre}</div>
+                <div class="product-price">S/. ${precio}</div>
+                <div class="product-tallas">Tallas: ${tallas}</div>
+                <a href="https://wa.me/51925472563?text=${mensaje}" class="btn-whatsapp" target="_blank">💬 Consultar por WhatsApp</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      document.getElementById('stats').innerHTML = 
+        '📦 ' + displayProducts.length + ' productos disponibles';
+    }
+    
+    document.getElementById('searchBox').addEventListener('input', applySearch);
+    
+    updateStats();
+    renderProducts();
+  </script>
+</body>
+</html>
