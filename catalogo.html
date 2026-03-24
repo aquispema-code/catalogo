@@ -27,7 +27,7 @@ body { font-family: -apple-system, sans-serif; background: #fafafa; }
 @media (max-width: 400px) { .products-grid { grid-template-columns: 1fr; gap: 16px; max-width: 320px; margin: 0 auto; } }
 .product-card { background: white; border-radius: 16px; overflow: hidden; border: 1px solid #f0f0f0; transition: box-shadow 0.2s; }
 .product-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-.product-image { width: 100%; aspect-ratio: 4/5; background: linear-gradient(135deg, #FFF5F9 0%, #FFE5F0 100%); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
+.product-image { width: 100%; aspect-ratio: 5/4; background: linear-gradient(135deg, #FFF5F9 0%, #FFE5F0 100%); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
 .product-info { padding: 12px; }
 .product-name { font-size: 13px; font-weight: 600; margin-bottom: 8px; min-height: 34px; }
 .product-price { font-size: 18px; font-weight: 700; color: #EE2171; margin-bottom: 8px; }
@@ -221,10 +221,10 @@ var combosSeleccionados = [];
 var extrasSeleccionados = [];
 
 var COMBOS = {
-  "Tem\u00e1tico": [{id:"tematico", nombre:"Combo Tem\u00e1tico", precio:50, items:"Corona tem\u00e1tica + Cartera + Zapatos"}],
+  "Temático": [{id:"tematico", nombre:"Combo Temático", precio:50, items:"Corona temática + Cartera + Zapatos"}],
   "Bautizo": [{id:"princesa", nombre:"Combo Princesa", precio:60, items:"Corona princesa + Cartera + Zapatos"},{id:"premium", nombre:"Combo Premium", precio:70, items:"Corona princesa + Cartera + Zapatos + Mitones"}],
-  "Mayor": [{id:"tematico", nombre:"Combo Tem\u00e1tico", precio:50, items:"Corona tem\u00e1tica + Cartera + Zapatos"},{id:"princesa", nombre:"Combo Princesa", precio:60, items:"Corona princesa + Cartera + Zapatos"},{id:"premium", nombre:"Combo Premium", precio:70, items:"Corona princesa + Cartera + Zapatos + Mitones"}],
-  "Promoci\u00f3n": [{id:"princesa", nombre:"Combo Princesa", precio:60, items:"Corona princesa + Cartera + Zapatos"},{id:"premium", nombre:"Combo Premium", precio:70, items:"Corona princesa + Cartera + Zapatos + Mitones"}]
+  "Mayor": [{id:"tematico", nombre:"Combo Temático", precio:50, items:"Corona temática + Cartera + Zapatos"},{id:"princesa", nombre:"Combo Princesa", precio:60, items:"Corona princesa + Cartera + Zapatos"},{id:"premium", nombre:"Combo Premium", precio:70, items:"Corona princesa + Cartera + Zapatos + Mitones"}],
+  "Promoción": [{id:"princesa", nombre:"Combo Princesa", precio:60, items:"Corona princesa + Cartera + Zapatos"},{id:"premium", nombre:"Combo Premium", precio:70, items:"Corona princesa + Cartera + Zapatos + Mitones"}]
 };
 
 var EXTRAS = [
@@ -272,7 +272,7 @@ function renderProductos() {
   for (var i = 0; i < filtrados.length; i++) {
     var p = filtrados[i];
     var fotoStyle = p.foto ? "background-image:url('" + p.foto + "');" : "";
-    var fotoPlaceholder = p.foto ? "" : '<div style="font-size:64px;">\uD83D\uDC57</div>';
+    var fotoPlaceholder = p.foto ? "" : '<div style="font-size:64px;">👗</div>';
     html += '<div class="product-card">';
     html += '<div class="product-image" style="' + fotoStyle + '">' + fotoPlaceholder + '</div>';
     html += '<div class="product-info">';
@@ -377,9 +377,9 @@ function actualizarTotal() {
 function irAWhatsAppSinCombo() {
   if (!productoActual) return;
   var mensaje = "Hola! Me interesa el " + productoActual.nombre + "\n\n";
-  mensaje += "\u00bfTienen disponible la talla __?\n";
-  mensaje += "\u00bfCu\u00e1ndo lo puedo recoger en tienda?\n\n";
-  mensaje += "\u00a1Gracias! \uD83D\uDC95";
+  mensaje += "¿Tienen disponible la talla __?\n";
+  mensaje += "¿Cuándo lo puedo recoger en tienda?\n\n";
+  mensaje += "¡Gracias! 💕";
   window.open("https://wa.me/" + CONFIG.WHATSAPP_NUMERO + "?text=" + encodeURIComponent(mensaje), "_blank");
   closeCombosModal();
 }
@@ -390,32 +390,32 @@ function irAWhatsAppConCombo() {
   var mensaje = "Hola! Me interesa el " + productoActual.nombre + "\n";
   mensaje += "Precio: S/. " + productoActual.precio + "\n";
   if (combosSeleccionados.length > 0) {
-    mensaje += "\n\uD83C\uDF81 Combos:\n";
+    mensaje += "\n🎁 Combos:\n";
     var allCombos = [];
     var keys = Object.keys(COMBOS);
     for (var k = 0; k < keys.length; k++) allCombos = allCombos.concat(COMBOS[keys[k]]);
     for (var i = 0; i < combosSeleccionados.length; i++) {
       for (var j = 0; j < allCombos.length; j++) {
         if (allCombos[j].id === combosSeleccionados[i]) {
-          mensaje += "  \u2022 " + allCombos[j].nombre + " (+S/. " + allCombos[j].precio + ")\n";
+          mensaje += "  • " + allCombos[j].nombre + " (+S/. " + allCombos[j].precio + ")\n";
           break;
         }
       }
     }
   }
   if (extrasSeleccionados.length > 0) {
-    mensaje += "\n\u2728 Extras:\n";
+    mensaje += "\n✨ Extras:\n";
     for (var i = 0; i < extrasSeleccionados.length; i++) {
       for (var j = 0; j < EXTRAS.length; j++) {
         if (EXTRAS[j].id === extrasSeleccionados[i]) {
-          mensaje += "  \u2022 " + EXTRAS[j].nombre + " (+S/. " + EXTRAS[j].precio + ")\n";
+          mensaje += "  • " + EXTRAS[j].nombre + " (+S/. " + EXTRAS[j].precio + ")\n";
           break;
         }
       }
     }
   }
   var total = document.getElementById("totalAmount").textContent;
-  mensaje += "\nTotal: " + total + "\n\nTalla: __\n\n\u00bfCu\u00e1ndo lo puedo recoger en tienda? \uD83D\uDC95";
+  mensaje += "\nTotal: " + total + "\n\nTalla: __\n\n¿Cuándo lo puedo recoger en tienda? 💕";
   window.open("https://wa.me/" + CONFIG.WHATSAPP_NUMERO + "?text=" + encodeURIComponent(mensaje), "_blank");
   closeCombosModal();
 }
